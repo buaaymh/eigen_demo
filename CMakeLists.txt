@@ -27,11 +27,8 @@ message("petsc LIB : ${PETSC_LIB}")
 find_path(BOOST_INC "boost")
 message("boost INC : ${BOOST_INC}")
 
-find_path(EIGEN_INC "eigen3")
-message("eigen3 INC : ${EIGEN_INC}")
-
-find_path(LAPACK_INC "lapack")
-message("lapack INC : ${LAPACK_INC}")
+message("eigen INC : ${PROJECT_SOURCE_DIR}/ThirdParty/eigen")
+set(EIGEN_INC "${PROJECT_SOURCE_DIR}/ThirdParty/eigen")
 
 add_executable(matrix_boost matrix_boost.cpp)
 target_include_directories(matrix_boost PRIVATE ${BOOST_INC})

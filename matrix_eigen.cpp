@@ -1,6 +1,6 @@
 #include <iostream>
-#include <eigen3/Eigen/Dense>
-#include <eigen3/Eigen/Eigenvalues>
+#include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
 
 using namespace std;
 using namespace Eigen;
