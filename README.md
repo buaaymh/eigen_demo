@@ -25,3 +25,114 @@ Eigen性能优化技巧，尽量用静态矩阵代替动态矩阵，Eigen性能�
 Eigen优势：提供了多种矩阵运算库的统一接口，避免了中间变量的内存消耗。学习成本低，极易上手。可用于CUDA使用。
 
 Eigen缺点：默认不采用多线程，运算速度慢。
+
+
+
+Eigen矩阵初始化
+
+```c++
+#include <iostream>
+#include <Eigen/Dense>
+/* static */
+Matrix<typename Scalar, int RowsAtCompileTime, int ColsAtCompileTime>
+typedef Matrix<float, 4, 4> Matrix4f;
+typedef Matrix<float, 3, 1> Vector3f;
+typedef Matrix<float, 3, 1> Vector3f;
+/* dynamic */
+typedef Matrix<double, Dynamic, Dynamic> MatrixXd;
+typedef Matrix<int, Dynamic, 1> VectorXi;
+Matrix<float, 3, Dynamic>
+
+/* initialize size */
+/* a is a 10x15 dynamic-size matrix, with allocated but currently uninitialized coefficients. */
+MatrixXf a(10,15);
+/* b is a dynamic-size vector of size 30, with allocated but currently uninitialized coefficients. */
+VectorXf b(30);
+
+/* initialize coefficients */
+Vector2d a(5.0, 6.0);
+Vector3d b(5.0, 6.0, 7.0);
+Vector4d c(5.0, 6.0, 7.0, 8.0);
+
+MatrixXd m(2,2);
+m(0,0) = 3;
+m(1,0) = 2.5;
+m(0,1) = -1;
+m(1,1) = m(1,0) + m(0,1);
+
+Matrix3f m;
+m << 1, 2, 3,
+     4, 5, 6,
+     7, 8, 9;
+
+/* resize */
+MatrixXd m(2,5);
+m.resize(4,3);
+std::cout << "The matrix m is of size " << m.rows() << "x" << m.cols() << std::endl;
+std::cout << "It has " << m.size() << " coefficients" << std::endl;
+VectorXd v(2);
+v.resize(5);
+std::cout << "The vector v is of size " << v.size() << std::endl;
+std::cout << "As a matrix, v is of size " << v.rows() << "x" << v.cols() << std::endl;
+
+/* optional template parameters */
+Matrix<typename Scalar,
+       int RowsAtCompileTime,
+       int ColsAtCompileTime,
+       int Options = 0,
+       int MaxRowsAtCompileTime = RowsAtCompileTime,
+       int MaxColsAtCompileTime = ColsAtCompileTime>
+
+/*
+	 convenience typedefs
+	 i (meaning int), f (meaning float), d (meaning double), cf (meaning complex<float>), 	 or cd (meaning complex<double>)
+*/
+using MatrixXi = Matrix<int, Dynamic, Dynamic>;
+using Vector2f = Matrix<float, 2, 1>;
+using RowVector3d = Matrix<double, 1, 3>;
+/* comma initialization */
+MatrixXf matA(2, 2);
+matA << 1, 2, 3, 4;
+MatrixXf matB(4, 4);
+matB << matA, matA/10, matA/10, matA;
+Matrix3f m;
+m.row(0) << 1, 2, 3;
+m.block(1,0,2,2) << 4, 5, 7, 8;
+m.col(2).tail(2) << 6, 9;   
+/* advanced initialization */
+Array33f a1 = Array33f::Zero();
+ArrayXf a2 = ArrayXf::Zero(3);
+ArrayXXf a3 = ArrayXXf::Zero(3, 4);
+MatrixXd::Constant(3,3,1.2);
+// Zero(), Random(), Identity(), Constant(value), LinSpaced(size, low, high)
+```
+
+Eigen矩阵基本操作
+
+```c++
+#include <iostream>
+#include <Eigen/Dense>
+Matrix2i a; a << 1, 2, 3, 4;
+a.transpose() //转置
+a.conjugate() //共轭
+a.adjoint()   //伴随
+  
+Vector3d v(1,2,3);
+Vector3d w(0,1,2);
+v.dot(w);
+v.cross(w)
+  
+Eigen::Matrix2d mat;
+mat << 1, 2, 3, 4;
+mat.sum();  // 1+2+3+4
+mat.prod(); // 1*2*3*4
+mat.mean(); // (1+2+3+4)/4
+mat.minCoeff()
+mat.maxCoeff()
+Matrix3f m = Matrix3f::Random();
+std::ptrdiff_t i, j;
+float minOfM = m.minCoeff(&i,&j); // i, j are position
+mat.trace() // sum of the diagonal coefficients
+
+```
+
