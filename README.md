@@ -1,34 +1,35 @@
 # Eigen
 
-**基础矩阵运算库**
+## 基础矩阵库
 
-BLAS(Basic Linear Algebra Subprograms)：支持基础线性代数运算操作的数值库
+- [BLAS (Basic Linear Algebra Subprograms)]()：支持基础线性代数运算操作的数值库
+- [LAPACK]()：支持高级线性代数运算的数值库，底层是BLAS，用于求解方程组等复杂问题
 
-LAPACK：支持高级线性代数运算的数值库，底层是BLAS，用于求解方程组等复杂问题
+## 高级矩阵库
 
-**高级矩阵运算库**
+- [MKL]()：使用 [OpenMP]() 实现的线程化高性能代数运算数值库，充分利用多核处理器，底层是 BLAS, LAPACK
+- [Eigen]()：通过模板方式实现的 header-only 库，底层 BLAS/LAPACK (`EIGEN_USE_BLAS`, `EIGEN_USE_LAPACK`)，支持 MKL 作为底层 (`EIGEN_USE_MKL_ALL`)，支持 [CUDA kernels]() 里使用。
 
-MKL：使用OpenMP实现的线程化高性能代数运算数值库，充分利用多核处理器，底层是BLAS, LAPACK
+## 性能评价
 
-Eigen：通过模板方式实现的head-only库，底层BLAS/LAPACK(EIGEN_USE_BLAS, EIGEN_USE_LAPACK)，支持MKL作为底层(EIGEN_USE_MKL_ALL)，支持CUDA kernels里使用。
+默认运行速度：Matlab = MKL > Eigen (with MTK only) > python.numpy >> Eigen
 
+原因：Eigen 默认是单线程运算，前几个均支持多线程，单线程相差很小。
 
+Eigen 性能优化技巧：
+- 尽量用静态矩阵代替动态矩阵。
+- Eigen 性能对编译器优化等级敏感 (`-O3`)，使用 Release 模式避免检查。
 
-默认运行速度：Matlab = MKL > Eigen(with MTK only) > python.numpy >> Eigen
+- Eigen 优势：
+  - 提供了多种矩阵运算库的统一接口，避免了中间变量的内存消耗。
+  - 学习成本低，极易上手。
+  - 可用于 CUDA 使用。
+- Eigen 缺点：
+  - 默认不采用多线程，运算速度慢。
 
-原因：Eigen默认是单线程运算，前几个均支持多线程，单线程相差很小。
+## 常用语句
 
-Eigen性能优化技巧，尽量用静态矩阵代替动态矩阵，Eigen性能对编译器优化等级敏感(o3)，使用release模式避免检查。
-
-
-
-Eigen优势：提供了多种矩阵运算库的统一接口，避免了中间变量的内存消耗。学习成本低，极易上手。可用于CUDA使用。
-
-Eigen缺点：默认不采用多线程，运算速度慢。
-
-
-
-Eigen矩阵初始化
+### 矩阵初始化
 
 ```c++
 #include <iostream>
@@ -107,15 +108,15 @@ MatrixXd::Constant(3,3,1.2);
 // Zero(), Random(), Identity(), Constant(value), LinSpaced(size, low, high)
 ```
 
-Eigen矩阵基本操作
+### 矩阵基本运算
 
 ```c++
 #include <iostream>
 #include <Eigen/Dense>
 Matrix2i a; a << 1, 2, 3, 4;
-a.transpose() //转置
-a.conjugate() //共轭
-a.adjoint()   //伴随
+a.transpose()
+a.conjugate()
+a.adjoint()
   
 Vector3d v(1,2,3);
 Vector3d w(0,1,2);
@@ -133,6 +134,4 @@ Matrix3f m = Matrix3f::Random();
 std::ptrdiff_t i, j;
 float minOfM = m.minCoeff(&i,&j); // i, j are position
 mat.trace() // sum of the diagonal coefficients
-
 ```
-
